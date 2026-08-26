@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import './marketplace.css';
+import './home-showcase.css';
 
 export const metadata: Metadata = {
   title: 'Progetto Abitare Insieme',
