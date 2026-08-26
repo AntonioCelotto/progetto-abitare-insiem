@@ -1,37 +1,114 @@
 const services = [
-  ['Scopri cosa puoi aprire', 'Parti da Regione, immobile, budget e obiettivi. Il configuratore ti guiderà verso la soluzione più adatta.'],
-  ['Normativa e requisiti', 'Requisiti organizzativi, strutturali e autorizzativi raccolti per Regione e tipologia di struttura.'],
-  ['Trova il tuo immobile', 'Immobili potenzialmente adatti a case famiglia, comunità alloggio, RSA e nuovi modelli di senior living.'],
-  ['Professionisti e fornitori', 'Una rete specializzata per progettazione, autorizzazioni, sicurezza, arredi, tecnologia e servizi.'],
+  ['01', 'Scopri cosa puoi aprire', 'Parti da Regione, immobile, budget e obiettivi. Il configuratore ti guida verso il percorso da approfondire.'],
+  ['02', 'Verifica immobile', 'Una prima lettura di metrature, camere, accessibilita, servizi e documentazione disponibile.'],
+  ['03', 'Normativa e autorizzazioni', 'Requisiti regionali, iter, enti competenti e documenti organizzati per tipologia di struttura.'],
+  ['04', 'Apri con noi', 'Tecnici, consulenti, fornitori, software e supporto operativo fino all avvio della struttura.'],
+];
+
+const paths = [
+  ['Casa famiglia e piccole comunita', 'Per progetti residenziali contenuti e modelli a dimensione familiare.'],
+  ['Residenze e alloggi protetti', 'Per anziani autonomi o fragili che necessitano di un ambiente organizzato e protetto.'],
+  ['RSA e strutture sociosanitarie', 'Per progetti complessi rivolti alla non autosufficienza e all assistenza sociosanitaria.'],
+  ['Senior living e cohousing', 'Per nuovi modelli abitativi dedicati alla terza eta, anche con servizi condivisi.'],
+];
+
+const steps = [
+  ['1', 'Raccontaci il progetto', 'Regione, Comune, numero di ospiti, tipo di utenza e budget.'],
+  ['2', 'Analizziamo il punto di partenza', 'Se hai gia un immobile, inserisci metrature, camere, bagni e caratteristiche principali.'],
+  ['3', 'Ricevi un primo orientamento', 'Il sistema individua i percorsi compatibili da approfondire e le principali verifiche da fare.'],
+  ['4', 'Passa allo studio professionale', 'Se vuoi procedere, trasformiamo il risultato in uno studio di fattibilita operativo.'],
 ];
 
 export default function Home() {
   return (
     <main>
       <header className="nav">
-        <div className="brand"><span>PROGETTO</span> ABITARE INSIEME</div>
-        <nav><a href="#come-funziona">Come funziona</a><a href="#servizi">Servizi</a><a href="#territori">Territori</a></nav>
-        <a className="button small" href="#configuratore">Inizia il progetto</a>
+        <a className="brand" href="#top"><span>PROGETTO</span> ABITARE INSIEME</a>
+        <nav>
+          <a href="#come-funziona">Come funziona</a>
+          <a href="#percorsi">Cosa puoi aprire</a>
+          <a href="#servizi">Servizi</a>
+          <a href="#territori">Territori</a>
+        </nav>
+        <a className="button small" href="/configuratore">Inizia il progetto</a>
       </header>
 
-      <section className="hero">
-        <div className="eyebrow">IL PORTALE PER L'ABITARE DELLA TERZA ETÀ</div>
-        <h1>Dall'idea all'apertura<br/>della tua <em>struttura.</em></h1>
-        <p>Un unico punto di riferimento per capire cosa aprire, verificare requisiti e normativa, trovare immobili e professionisti e costruire il tuo progetto.</p>
-        <div className="actions"><a className="button" href="#configuratore">Scopri cosa puoi aprire</a><a className="ghost" href="#come-funziona">Come funziona →</a></div>
-        <div className="regions" id="territori"><span>PARTIAMO DA</span><strong>Piemonte</strong><strong>Lombardia</strong><strong>Liguria</strong></div>
+      <section className="hero" id="top">
+        <div className="hero-copy">
+          <div className="eyebrow">IL PORTALE PER APRIRE E GESTIRE STRUTTURE PER ANZIANI</div>
+          <h1>Il tuo progetto.<br/><em>Dall idea all apertura.</em></h1>
+          <p>Capisci cosa puoi aprire, verifica il tuo immobile, orientati tra normativa e autorizzazioni e costruisci un percorso concreto insieme a professionisti specializzati.</p>
+          <div className="actions">
+            <a className="button" href="/configuratore">Scopri cosa puoi aprire</a>
+            <a className="ghost" href="#come-funziona">Guarda come funziona</a>
+          </div>
+          <div className="trust-row">
+            <div><strong>3</strong><span>Regioni nella prima fase</span></div>
+            <div><strong>1</strong><span>Percorso guidato</span></div>
+            <div><strong>360</strong><span>Approccio al progetto</span></div>
+          </div>
+        </div>
+        <aside className="hero-panel">
+          <span className="panel-kicker">PARTI DA UNA DOMANDA SEMPLICE</span>
+          <h2>Cosa vuoi aprire?</h2>
+          <div className="quick-options">
+            <span>Casa famiglia</span>
+            <span>Comunita alloggio</span>
+            <span>Residenza protetta</span>
+            <span>RSA</span>
+            <span>Senior living</span>
+            <span>Non lo so ancora</span>
+          </div>
+          <a href="/configuratore" className="panel-link">Avvia il check preliminare →</a>
+        </aside>
+      </section>
+
+      <section className="region-strip" id="territori">
+        <span>FASE DI LANCIO</span>
+        <strong>Piemonte</strong><strong>Lombardia</strong><strong>Liguria</strong>
+        <small>Espansione progressiva nelle altre Regioni italiane</small>
       </section>
 
       <section className="intro" id="come-funziona">
-        <div><span className="kicker">UN PROGETTO, TUTTO IL PERCORSO</span><h2>Aprire una struttura non deve essere un percorso al buio.</h2></div>
-        <p>Abitare Insieme nasce per trasformare un processo complesso in un percorso guidato: dall'analisi iniziale fino all'apertura e, successivamente, alla gestione.</p>
+        <div><span className="kicker">UN SOLO PUNTO DI PARTENZA</span><h2>Aprire una struttura non deve essere un percorso al buio.</h2></div>
+        <div><p>Normative regionali, immobile, autorizzazioni, personale, investimenti e fornitori rendono il progetto complesso. Abitare Insieme organizza tutto in un percorso leggibile e progressivo.</p><p>Il portale non sostituisce i professionisti: li mette al momento giusto dentro un processo guidato.</p></div>
       </section>
 
-      <section className="cards" id="servizi">
-        {services.map(([title, text], i) => <article key={title}><span>0{i+1}</span><h3>{title}</h3><p>{text}</p></article>)}
+      <section className="steps">
+        {steps.map(([num,title,text]) => <article key={num}><span>{num}</span><h3>{title}</h3><p>{text}</p></article>)}
       </section>
 
-      <section className="cta" id="configuratore"><span className="kicker">IL PRIMO PASSO</span><h2>Hai un'idea o un immobile?<br/>Partiamo da lì.</h2><p>Il configuratore di Abitare Insieme ti aiuterà a capire quali possibilità puoi approfondire.</p><button className="button">Avvia il configuratore</button></section>
+      <section className="paths" id="percorsi">
+        <div className="section-head"><span className="kicker">COSA PUOI APRIRE</span><h2>Non esiste una sola “casa per anziani”.</h2><p>La tipologia corretta dipende da Regione, ospiti, servizi, immobile e livello assistenziale.</p></div>
+        <div className="path-grid">
+          {paths.map(([title,text]) => <article key={title}><h3>{title}</h3><p>{text}</p><a href="/configuratore">Verifica il tuo caso →</a></article>)}
+        </div>
+      </section>
+
+      <section className="services" id="servizi">
+        <div className="section-head light"><span className="kicker">DAL CHECK ALL APERTURA</span><h2>Un ecosistema di servizi intorno al progetto.</h2></div>
+        <div className="cards">
+          {services.map(([num,title,text]) => <article key={num}><span>{num}</span><h3>{title}</h3><p>{text}</p></article>)}
+        </div>
+      </section>
+
+      <section className="business-band">
+        <div><span className="kicker">HAI GIA UNA STRUTTURA?</span><h2>Abitare Insieme continua anche dopo l apertura.</h2></div>
+        <p>Gestionale, digitalizzazione, AI, app per le famiglie, marketing, fornitori e nuovi servizi per strutture gia operative.</p>
+      </section>
+
+      <section className="cta">
+        <span className="kicker">IL PRIMO PASSO E GRATUITO</span>
+        <h2>Hai un idea o un immobile?<br/>Partiamo da li.</h2>
+        <p>Rispondi ad alcune domande e ottieni un primo orientamento sul percorso da approfondire in Piemonte, Lombardia o Liguria.</p>
+        <a className="button gold" href="/configuratore">Avvia il configuratore</a>
+      </section>
+
+      <footer>
+        <div className="brand footer-brand"><span>PROGETTO</span> ABITARE INSIEME</div>
+        <p>Dall idea all apertura della tua struttura.</p>
+        <small>Le informazioni del portale hanno finalita orientativa e devono essere verificate rispetto alla normativa vigente e al caso concreto.</small>
+      </footer>
     </main>
   );
 }
