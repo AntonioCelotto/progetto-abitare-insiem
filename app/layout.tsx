@@ -3,6 +3,7 @@ import './globals.css';
 import './marketplace.css';
 import './home-showcase.css';
 import './project.css';
+import './auth.css';
 
 export const metadata: Metadata = {
   title: 'Progetto Abitare Insieme',
