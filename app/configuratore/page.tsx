@@ -1,115 +1,47 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { FormEvent, useMemo, useState } from 'react';
 
-type Answers = {
-  region: string;
-  property: string;
-  guests: string;
-  users: string;
-  services: string;
-};
+type Answers = { region:string; property:string; municipality:string; guests:string; users:string; services:string; budget:string; timing:string };
+type Result = { code:string; level:string; title:string; text:string; next:string[] };
 
+const initial: Answers = { region:'', property:'', municipality:'', guests:'', users:'', services:'', budget:'', timing:'' };
 const steps = [
-  { key: 'region', title: 'Dove vuoi aprire?', options: ['Piemonte', 'Lombardia', 'Liguria'] },
-  { key: 'property', title: 'Hai gia un immobile?', options: ['Si', 'No', 'Sto cercando'] },
-  { key: 'guests', title: 'Quanti ospiti immagini?', options: ['1-4', '5-12', '13-20', '21-40', 'Oltre 40'] },
-  { key: 'users', title: 'Che tipo di ospiti vuoi accogliere?', options: ['Autosufficienti', 'Fragili / parzialmente autosufficienti', 'Non autosufficienti', 'Non lo so ancora'] },
-  { key: 'services', title: 'Che livello di assistenza immagini?', options: ['Abitazione e servizi di base', 'Assistenza quotidiana', 'OSS e assistenza continuativa', 'Infermieristica / sanitaria', 'Non lo so ancora'] },
+  { key:'region', title:'In quale Regione vuoi aprire?', help:'La normativa cambia in modo importante da Regione a Regione.', options:['Piemonte','Lombardia','Liguria'] },
+  { key:'property', title:'Da dove parti con l immobile?', help:'Capire se esiste gia un immobile cambia completamente il percorso di fattibilita.', options:['Ho gia un immobile','Sto valutando un immobile','Devo ancora trovarlo'] },
+  { key:'municipality', title:'Hai gia individuato il Comune?', help:'Comune, ASL/ATS e SUAP diventano centrali nella verifica concreta.', options:['Torino / provincia','Milano / provincia','Genova / provincia','Altro Comune','Non ancora'] },
+  { key:'guests', title:'Quanti ospiti immagini?', help:'La capacita ricettiva e uno dei parametri che puo cambiare la tipologia di struttura.', options:['1-4','5-12','13-20','21-40','Oltre 40'] },
+  { key:'users', title:'Che tipo di ospiti vuoi accogliere?', help:'Autosufficienza e fragilita determinano il livello assistenziale e autorizzativo.', options:['Autosufficienti','Fragili / parzialmente autosufficienti','Non autosufficienti','Non lo so ancora'] },
+  { key:'services', title:'Che livello di assistenza immagini?', help:'Non e la stessa cosa offrire servizi abitativi, assistenza quotidiana o prestazioni sanitarie.', options:['Abitazione e servizi di base','Assistenza quotidiana','OSS e assistenza continuativa','Infermieristica / sanitaria','Non lo so ancora'] },
+  { key:'budget', title:'Quale investimento stai immaginando?', help:'Ci serve per distinguere un progetto leggero da un operazione immobiliare e sociosanitaria strutturata.', options:['Fino a 100.000 euro','100.000 - 300.000 euro','300.000 - 750.000 euro','Oltre 750.000 euro','Da definire'] },
+  { key:'timing', title:'Quando vorresti partire?', help:'Possiamo capire se sei in fase esplorativa o se serve gia una verifica operativa.', options:['Entro 3 mesi','3-6 mesi','6-12 mesi','Oltre 12 mesi','Sto solo valutando'] },
 ] as const;
 
-function getResult(a: Answers) {
-  if (a.users === 'Non autosufficienti' || a.services === 'Infermieristica / sanitaria') {
-    return {
-      level: 'Percorso sociosanitario da approfondire',
-      title: 'Il progetto richiede una verifica professionale prima di individuare la tipologia corretta.',
-      text: 'La presenza di non autosufficienza o servizi sanitari puo portare verso strutture con requisiti autorizzativi, organizzativi e dimensionali piu complessi, come RSA o modelli equivalenti previsti dalla Regione.',
-    };
+function getResult(a: Answers): Result {
+  const medical = a.users === 'Non autosufficienti' || a.services === 'Infermieristica / sanitaria';
+  if (medical) {
+    const name = a.region === 'Piemonte' ? 'RSA / percorso sociosanitario piemontese' : a.region === 'Liguria' ? 'RSA / percorso sociosanitario ligure' : 'RSA / unita di offerta sociosanitaria lombarda';
+    return { code:`${a.region.toLowerCase()}_sociosanitario`, level:'PROGETTO AD ALTA COMPLESSITA', title:`Prima ipotesi: ${name}.`, text:'Il profilo degli ospiti o i servizi indicati portano verso un percorso con requisiti strutturali, organizzativi e autorizzativi piu elevati. Prima di investire sull immobile e indispensabile uno studio di fattibilita.', next:['Verifica normativa regionale puntuale','Analisi urbanistica e strutturale dell immobile','Dimensionamento personale e servizi','Iter autorizzativo e possibile accreditamento'] };
   }
-  if (a.region === 'Lombardia' && a.guests === '5-12') {
-    return {
-      level: 'Compatibilita preliminare interessante',
-      title: 'In Lombardia vale la pena approfondire il percorso C.A.S.A. e le altre unita di offerta per anziani fragili.',
-      text: 'Il numero di ospiti indicato rientra nel range tipico della C.A.S.A. lombarda. La compatibilita reale dipende da utenza, immobile, servizi e requisiti organizzativi.',
-    };
+  if (a.region === 'Lombardia' && (a.guests === '5-12' || a.guests === '13-20') && a.users !== 'Non autosufficienti') {
+    return { code:'lombardia_casa', level:'COMPATIBILITA PRELIMINARE INTERESSANTE', title:'Prima ipotesi: C.A.S.A. e modelli residenziali lombardi per anziani.', text:'Il profilo indicato rende interessante approfondire la C.A.S.A. e, in base a utenza e servizi, altre soluzioni residenziali lombarde. Non significa ancora che l immobile o il progetto siano autorizzabili.', next:['Confermare il profilo degli ospiti','Verificare capacita e caratteristiche dell immobile','Confrontare C.A.S.A. e modelli alternativi','Verificare ATS e SUAP territorialmente competenti'] };
   }
-  if (a.guests === '1-4') {
-    return {
-      level: 'Micro progetto residenziale',
-      title: 'La dimensione indicata richiede una verifica locale molto precisa.',
-      text: 'Per nuclei molto piccoli la classificazione puo cambiare sensibilmente tra Regioni e Comuni. Il passo corretto e verificare natura dell attivita, immobile e regolamenti locali prima di definire il modello.',
-    };
+  if (a.region === 'Liguria' && (a.users === 'Fragili / parzialmente autosufficienti' || a.services === 'Assistenza quotidiana')) {
+    return { code:'liguria_protetta', level:'PERCORSO DA APPROFONDIRE', title:'Prima ipotesi: Residenza Protetta, Comunita Alloggio o Alloggio Protetto.', text:'In Liguria il livello di fragilita e i servizi effettivamente erogati sono decisivi per distinguere le diverse soluzioni. Serve verificare quale modello corrisponde davvero al progetto.', next:['Definire autonomia e bisogni degli ospiti','Verificare servizi assistenziali previsti','Analizzare immobile e capacita ricettiva','Individuare il percorso autorizzativo corretto'] };
   }
-  return {
-    level: 'Primo orientamento completato',
-    title: 'Ci sono piu percorsi possibili da confrontare.',
-    text: 'Con i dati inseriti possiamo gia restringere il campo, ma per indicare una tipologia precisa servono informazioni sull immobile, sul Comune e sui servizi che vuoi effettivamente erogare.',
-  };
+  if (a.region === 'Piemonte' && (a.users === 'Autosufficienti' || a.users === 'Fragili / parzialmente autosufficienti')) {
+    return { code:'piemonte_residenziale', level:'BUONA BASE DI PARTENZA', title:'Prima ipotesi: modello residenziale assistenziale piemontese.', text:'Il progetto puo essere orientato verso forme residenziali per anziani autosufficienti o con bisogni assistenziali contenuti. La denominazione e i requisiti corretti vanno confermati sulla base dei servizi e dell immobile.', next:['Definire esattamente il target ospiti','Verificare requisiti regionali applicabili','Fare il check tecnico dell immobile','Costruire business plan e piano autorizzativo'] };
+  }
+  if (a.guests === '1-4') return { code:'micro_residenziale', level:'MICRO PROGETTO DA VERIFICARE', title:'Un piccolo nucleo puo essere interessante, ma va classificato con attenzione.', text:'Con pochissimi ospiti il confine tra modello abitativo, attivita ricettiva e struttura assistenziale deve essere verificato prima di impostare il business.', next:['Verifica della classificazione regionale e locale','Definizione precisa dei servizi','Check destinazione d uso e immobile','Confronto con SUAP e autorita competenti'] };
+  return { code:'orientamento', level:'ORIENTAMENTO COMPLETATO', title:'Il progetto ha piu strade possibili: ora possiamo restringerle.', text:'Le risposte permettono di impostare una prima direzione, ma la scelta corretta dipende da Comune, immobile, target degli ospiti e servizi realmente erogati.', next:['Analisi della normativa della Regione','Verifica tecnica dell immobile','Scelta della tipologia piu sostenibile','Studio economico e autorizzativo'] };
 }
 
-export default function ConfiguratorePage() {
-  const [step, setStep] = useState(0);
-  const [answers, setAnswers] = useState<Answers>({ region: '', property: '', guests: '', users: '', services: '' });
-  const done = step >= steps.length;
-  const result = useMemo(() => getResult(answers), [answers]);
-
-  const choose = (value: string) => {
-    const current = steps[step];
-    setAnswers(prev => ({ ...prev, [current.key]: value }));
-    setStep(prev => prev + 1);
-  };
-
-  const restart = () => {
-    setAnswers({ region: '', property: '', guests: '', users: '', services: '' });
-    setStep(0);
-  };
-
-  return (
-    <main className="config-page">
-      <header className="config-nav">
-        <a className="brand" href="/"><span>PROGETTO</span> ABITARE INSIEME</a>
-        <a href="/" className="ghost">Torna alla home</a>
-      </header>
-
-      <section className="config-shell">
-        <div className="config-side">
-          <span className="kicker">CHECK PRELIMINARE</span>
-          <h1>Scopri quale percorso puoi approfondire.</h1>
-          <p>Non e ancora uno studio di fattibilita: serve per capire da dove partire e quali verifiche diventano prioritarie.</p>
-          <div className="progress"><span style={{width: `${Math.min(step, steps.length) / steps.length * 100}%`}} /></div>
-          <small>{done ? 'Check completato' : `Domanda ${step + 1} di ${steps.length}`}</small>
-        </div>
-
-        <div className="config-card">
-          {!done ? (
-            <>
-              <span className="question-number">0{step + 1}</span>
-              <h2>{steps[step].title}</h2>
-              <div className="answer-grid">
-                {steps[step].options.map(option => <button key={option} onClick={() => choose(option)}>{option}<span>→</span></button>)}
-              </div>
-              {step > 0 && <button className="back-button" onClick={() => setStep(s => s - 1)}>← Indietro</button>}
-            </>
-          ) : (
-            <div className="result-box">
-              <span className="result-label">{result.level}</span>
-              <h2>{result.title}</h2>
-              <p>{result.text}</p>
-              <div className="result-summary">
-                <div><span>Regione</span><strong>{answers.region}</strong></div>
-                <div><span>Immobile</span><strong>{answers.property}</strong></div>
-                <div><span>Ospiti</span><strong>{answers.guests}</strong></div>
-                <div><span>Utenza</span><strong>{answers.users}</strong></div>
-              </div>
-              <div className="result-actions">
-                <a className="button" href="mailto:info@progettoabitareinsieme.it?subject=Richiesta%20studio%20di%20fattibilita">Richiedi uno studio di fattibilita</a>
-                <button className="ghost-button" onClick={restart}>Rifai il check</button>
-              </div>
-              <small className="legal-note">Il risultato e orientativo e non costituisce autorizzazione, parere tecnico o verifica normativa definitiva.</small>
-            </div>
-          )}
-        </div>
-      </section>
-    </main>
-  );
+export default function ConfiguratorePage(){
+  const [step,setStep]=useState(0); const [answers,setAnswers]=useState<Answers>(initial); const [showLead,setShowLead]=useState(false); const [sent,setSent]=useState(false); const [sending,setSending]=useState(false); const [error,setError]=useState('');
+  const done=step>=steps.length; const result=useMemo(()=>getResult(answers),[answers]);
+  const choose=(value:string)=>{ const current=steps[step]; setAnswers(p=>({...p,[current.key]:value})); setStep(s=>s+1); };
+  const restart=()=>{setAnswers(initial);setStep(0);setShowLead(false);setSent(false);setError('')};
+  async function submitLead(e:FormEvent<HTMLFormElement>){ e.preventDefault(); setSending(true); setError(''); const fd=new FormData(e.currentTarget); const payload={first_name:String(fd.get('name')||''),last_name:String(fd.get('surname')||''),email:String(fd.get('email')||''),phone:String(fd.get('phone')||''),municipality:answers.municipality,message:String(fd.get('message')||''),configurator_answers:answers,result_code:result.code,result_title:result.title,result_summary:result.text,source:'configuratore',status:'new'};
+    try{ const r=await fetch('https://lbkdoxpanxvsrgqimzzj.supabase.co/rest/v1/leads',{method:'POST',headers:{'Content-Type':'application/json','apikey':'sb_publishable_6uNgrPI-Mj84tlHcFuICTQ_aG2zfoSU','Prefer':'return=minimal'},body:JSON.stringify(payload)}); if(!r.ok) throw new Error('Invio non riuscito'); setSent(true); }catch{setError('Non siamo riusciti a salvare la richiesta. Riprova tra poco.')}finally{setSending(false)} }
+  return <main className="config-page"><header className="config-nav"><a className="brand" href="/"><span>PROGETTO</span> ABITARE INSIEME</a><a href="/" className="ghost">Torna alla home</a></header><section className="config-shell"><div className="config-side"><span className="kicker">CONFIGURATORE DI PROGETTO</span><h1>Trasformiamo la tua idea in un primo percorso concreto.</h1><p>Otto domande per capire complessita, direzione normativa e verifiche prioritarie del tuo progetto.</p><div className="progress"><span style={{width:`${Math.min(step,steps.length)/steps.length*100}%`}}/></div><small>{done?'Analisi preliminare completata':`Domanda ${step+1} di ${steps.length}`}</small>{step>0&&<div className="mini-summary"><span>{answers.region}</span><span>{answers.guests&&`${answers.guests} ospiti`}</span><span>{answers.users}</span></div>}</div><div className="config-card">{!done?<><span className="question-number">0{step+1}</span><h2>{steps[step].title}</h2><p className="question-help">{steps[step].help}</p><div className="answer-grid">{steps[step].options.map(o=><button key={o} onClick={()=>choose(o)}>{o}<span>→</span></button>)}</div>{step>0&&<button className="back-button" onClick={()=>setStep(s=>s-1)}>← Indietro</button>}</>:<div className="result-box"><span className="result-label">{result.level}</span><h2>{result.title}</h2><p>{result.text}</p><div className="result-summary"><div><span>Regione</span><strong>{answers.region}</strong></div><div><span>Immobile</span><strong>{answers.property}</strong></div><div><span>Ospiti</span><strong>{answers.guests}</strong></div><div><span>Utenza</span><strong>{answers.users}</strong></div><div><span>Budget</span><strong>{answers.budget}</strong></div><div><span>Partenza</span><strong>{answers.timing}</strong></div></div><div className="next-checks"><span>LE PRIME VERIFICHE DA FARE</span>{result.next.map((x,i)=><div key={x}><b>0{i+1}</b>{x}</div>)}</div>{!showLead&&!sent&&<div className="result-actions"><button className="button" onClick={()=>setShowLead(true)}>Richiedi lo studio di fattibilita</button><button className="ghost-button" onClick={restart}>Rifai il configuratore</button></div>}{showLead&&!sent&&<form className="lead-form" onSubmit={submitLead}><div className="lead-head"><span>PASSO SUCCESSIVO</span><h3>Parlaci del tuo progetto.</h3><p>Riceveremo anche tutte le risposte del configuratore.</p></div><div className="lead-fields"><input name="name" placeholder="Nome" required/><input name="surname" placeholder="Cognome" required/><input name="email" type="email" placeholder="Email" required/><input name="phone" placeholder="Telefono" required/><textarea name="message" placeholder="Aggiungi qualche informazione sul progetto (facoltativo)"/></div>{error&&<p className="form-error">{error}</p>}<button className="button" disabled={sending}>{sending?'Invio in corso...':'Invia la richiesta'}</button></form>}{sent&&<div className="success-box"><strong>Richiesta ricevuta.</strong><p>Abbiamo salvato il tuo progetto e le risposte del configuratore. Potremo partire da questi dati per lo studio di fattibilita.</p></div>}<small className="legal-note">Il risultato e un orientamento preliminare e non costituisce autorizzazione, parere tecnico, legale o verifica normativa definitiva.</small></div>}</div></section></main>;
 }
