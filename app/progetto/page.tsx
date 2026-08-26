@@ -1,106 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-
-const API = 'https://lbkdoxpanxvsrgqimzzj.supabase.co';
-const KEY = 'sb_publishable_6uNgrPI-Mj84tlHcFuICTQ_aG2zfoSU';
-
-type Project = {
-  id: string;
-  title: string;
-  structure_type: string;
-  region: string;
-  municipality: string;
-  guests: number;
-  budget: string;
-  progress: number;
-  current_step: string;
-};
-
-const roadmap = [
-  ['✓', 'Configurazione iniziale', 'Completato'],
-  ['✓', 'Simulazione economica', 'Completato'],
-  ['03', 'Immobile', 'Da verificare'],
-  ['04', 'Normativa e requisiti', 'Prossimo'],
-  ['05', 'Studio di fattibilità', 'Da avviare'],
-  ['06', 'Professionisti e autorizzazioni', 'Da avviare'],
-  ['07', 'Personale', 'Da avviare'],
-  ['08', 'Fornitori e servizi', 'Da avviare'],
-  ['09', 'Apertura', 'Obiettivo finale'],
-];
-
-export default function Progetto() {
-  const [project, setProject] = useState<Project | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const token = localStorage.getItem('sb-access-token');
-    if (!token) {
-      setLoading(false);
-      return;
-    }
-    fetch(`${API}/rest/v1/user_projects?select=*&order=created_at.desc&limit=1`, {
-      headers: { apikey: KEY, Authorization: `Bearer ${token}` },
-    })
-      .then((r) => r.json())
-      .then((data) => {
-        if (Array.isArray(data) && data[0]) setProject(data[0]);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, []);
-
-  const demo: Project = project || {
-    id: 'demo',
-    title: 'Casa famiglia Torino',
-    structure_type: 'Casa famiglia',
-    region: 'Piemonte',
-    municipality: 'Torino',
-    guests: 10,
-    budget: '100.000 - 200.000 €',
-    progress: 25,
-    current_step: 'Verifica il tuo immobile',
-  };
-
-  return (
-    <main className="project-page">
-      <header className="config-nav">
-        <a className="brand" href="/"><span>PROGETTO</span> ABITARE INSIEME</a>
-        <div className="project-nav">
-          <a href="/immobili">Immobili</a><a href="/personale">Personale</a><a className="ghost" href="/">Home</a>
-        </div>
-      </header>
-
-      <section className="project-welcome">
-        <div><span className="kicker">IL MIO PROGETTO</span><h1>{demo.title}</h1><p>{demo.structure_type} · {demo.municipality} · {demo.region} · {demo.guests} ospiti</p></div>
-        <div className="progress-ring"><strong>{demo.progress}%</strong><span>completato</span></div>
-      </section>
-
-      {!project && !loading && <div className="demo-notice"><strong>Anteprima area personale</strong><span>Questa è una simulazione della tua futura area progetto. Con registrazione e login i dati saranno salvati automaticamente.</span></div>}
-
-      <section className="next-step">
-        <div><span className="kicker">IL PROSSIMO PASSO</span><h2>{demo.current_step}</h2><p>Prima di procedere con personale e fornitori, verifichiamo che l&apos;immobile sia coerente con la tipologia di struttura che vuoi realizzare.</p></div>
-        <div className="next-actions"><a className="button" href="/immobili">Trova un immobile</a><a className="ghost-button" href="/configuratore">Riprendi configuratore</a></div>
-      </section>
-
-      <section className="project-dashboard">
-        <div className="project-main">
-          <div className="project-section-head"><span className="kicker">PERCORSO DI APERTURA</span><h2>Dall&apos;idea all&apos;apertura</h2></div>
-          <div className="roadmap">{roadmap.map((step, i) => <div className={`roadmap-row ${i < 2 ? 'done' : i === 2 ? 'active' : ''}`} key={step[1]}><span className="roadmap-num">{step[0]}</span><div><strong>{step[1]}</strong><small>{step[2]}</small></div><span className="roadmap-arrow">→</span></div>)}</div>
-        </div>
-
-        <aside className="project-side">
-          <div className="project-card"><span className="kicker">DATI PROGETTO</span><h3>La tua idea in sintesi</h3><dl><div><dt>Tipologia</dt><dd>{demo.structure_type}</dd></div><div><dt>Territorio</dt><dd>{demo.municipality}, {demo.region}</dd></div><div><dt>Ospiti</dt><dd>{demo.guests || 'Da definire'}</dd></div><div><dt>Budget</dt><dd>{demo.budget || 'Da definire'}</dd></div></dl><a href="/configuratore">Modifica configurazione →</a></div>
-          <div className="project-card dark"><span className="kicker">SERVIZI UTILI ORA</span><a href="/immobili"><strong>Immobili compatibili</strong><span>Cerca spazi per il progetto →</span></a><a href="/personale"><strong>Personale qualificato</strong><span>Esplora i professionisti →</span></a><a href="/simulatore"><strong>Simulatore economico</strong><span>Aggiorna i numeri →</span></a></div>
-        </aside>
-      </section>
-
-      <section className="project-shortcuts">
-        <a href="/immobili"><span>♡</span><strong>Immobili salvati</strong><small>Costruisci la tua shortlist</small></a>
-        <a href="/personale"><span>◎</span><strong>Candidati salvati</strong><small>Profili interessanti per il team</small></a>
-        <a href="#"><span>▤</span><strong>Documenti</strong><small>Presto disponibile</small></a>
-        <a href="#"><span>↗</span><strong>Professionisti</strong><small>Presto disponibile</small></a>
-      </section>
-    </main>
-  );
-}
+const API='https://lbkdoxpanxvsrgqimzzj.supabase.co';const KEY='sb_publishable_6uNgrPI-Mj84tlHcFuICTQ_aG2zfoSU';
+type Project={id:string;title:string;structure_type:string;region:string;municipality:string;guests:number;budget:string;progress:number;current_step:string};
+const roadmap=[['✓','Configurazione iniziale','Completato'],['✓','Simulazione economica','Completato'],['03','Immobile','Da verificare'],['04','Normativa e requisiti','Prossimo'],['05','Studio di fattibilità','Da avviare'],['06','Professionisti e autorizzazioni','Da avviare'],['07','Personale','Da avviare'],['08','Fornitori e servizi','Da avviare'],['09','Apertura','Obiettivo finale']];
+export default function Progetto(){const[project,setProject]=useState<Project|null>(null);const[loading,setLoading]=useState(true);const[authenticated,setAuthenticated]=useState(false);
+useEffect(()=>{const token=localStorage.getItem('sb-access-token');if(!token){setLoading(false);return}fetch(`${API}/auth/v1/user`,{headers:{apikey:KEY,Authorization:`Bearer ${token}`}}).then(r=>{if(!r.ok)throw new Error();return r.json()}).then(()=>{setAuthenticated(true);return fetch(`${API}/rest/v1/user_projects?select=*&order=created_at.desc&limit=1`,{headers:{apikey:KEY,Authorization:`Bearer ${token}`}})}).then(r=>r.json()).then(d=>{if(Array.isArray(d)&&d[0])setProject(d[0]);setLoading(false)}).catch(()=>{localStorage.removeItem('sb-access-token');localStorage.removeItem('sb-refresh-token');setLoading(false)})},[]);
+function logout(){localStorage.removeItem('sb-access-token');localStorage.removeItem('sb-refresh-token');window.location.href='/auth'}
+if(loading)return <main className="project-page"><header className="config-nav"><a className="brand" href="/"><span>PROGETTO</span> ABITARE INSIEME</a></header><section className="project-empty"><span className="kicker">AREA PERSONALE</span><h1>Caricamento del tuo progetto...</h1></section></main>;
+if(!authenticated)return <main className="project-page"><header className="config-nav"><a className="brand" href="/"><span>PROGETTO</span> ABITARE INSIEME</a><a className="ghost" href="/">Home</a></header><section className="project-empty"><span className="kicker">AREA PERSONALE</span><h1>Accedi al tuo progetto.</h1><p>Registrati gratuitamente per salvare configurazioni, simulazioni, immobili e candidati e seguire tutti i passaggi fino all’apertura.</p><div><a className="button" href="/auth">Accedi o registrati</a><a className="ghost-button" href="/configuratore">Prima esplora il configuratore</a></div></section></main>;
+if(!project)return <main className="project-page"><header className="config-nav"><a className="brand" href="/"><span>PROGETTO</span> ABITARE INSIEME</a><div className="project-nav"><a href="/immobili">Immobili</a><a href="/personale">Personale</a><button className="logout-link" onClick={logout}>Esci</button></div></header><section className="project-empty"><span className="kicker">BENVENUTO IN ABITARE INSIEME</span><h1>Crea il tuo primo progetto.</h1><p>Rispondi alle domande del configuratore. Useremo le risposte per costruire il percorso, la prima simulazione economica e i prossimi passi più adatti a te.</p><a className="button" href="/configuratore">Inizia il mio progetto</a></section></main>;
+const p=project;return <main className="project-page"><header className="config-nav"><a className="brand" href="/"><span>PROGETTO</span> ABITARE INSIEME</a><div className="project-nav"><a href="/immobili">Immobili</a><a href="/personale">Personale</a><button className="logout-link" onClick={logout}>Esci</button></div></header><section className="project-welcome"><div><span className="kicker">IL MIO PROGETTO</span><h1>{p.title}</h1><p>{p.structure_type} · {p.municipality} · {p.region} · {p.guests||'—'} ospiti</p></div><div className="progress-ring"><strong>{p.progress}%</strong><span>completato</span></div></section><section className="next-step"><div><span className="kicker">IL PROSSIMO PASSO</span><h2>{p.current_step}</h2><p>Continua il percorso guidato: Abitare Insieme ti mostra cosa verificare e quali servizi possono essere utili in questa fase.</p></div><div className="next-actions"><a className="button" href="/immobili">Trova un immobile</a><a className="ghost-button" href="/configuratore">Modifica progetto</a></div></section><section className="project-dashboard"><div className="project-main"><div className="project-section-head"><span className="kicker">PERCORSO DI APERTURA</span><h2>Dall&apos;idea all&apos;apertura</h2></div><div className="roadmap">{roadmap.map((s,i)=><div className={`roadmap-row ${i<2?'done':i===2?'active':''}`} key={s[1]}><span className="roadmap-num">{s[0]}</span><div><strong>{s[1]}</strong><small>{s[2]}</small></div><span className="roadmap-arrow">→</span></div>)}</div></div><aside className="project-side"><div className="project-card"><span className="kicker">DATI PROGETTO</span><h3>La tua idea in sintesi</h3><dl><div><dt>Tipologia</dt><dd>{p.structure_type||'Da definire'}</dd></div><div><dt>Territorio</dt><dd>{p.municipality||'—'}, {p.region||'—'}</dd></div><div><dt>Ospiti</dt><dd>{p.guests||'Da definire'}</dd></div><div><dt>Budget</dt><dd>{p.budget||'Da definire'}</dd></div></dl><a href="/configuratore">Modifica configurazione →</a></div><div className="project-card dark"><span className="kicker">SERVIZI UTILI ORA</span><a href="/immobili"><strong>Immobili compatibili</strong><span>Cerca spazi per il progetto →</span></a><a href="/personale"><strong>Personale qualificato</strong><span>Esplora i professionisti →</span></a><a href="/simulatore"><strong>Simulatore economico</strong><span>Aggiorna i numeri →</span></a></div></aside></section><section className="project-shortcuts"><a href="/immobili"><span>♡</span><strong>Immobili salvati</strong><small>Costruisci la tua shortlist</small></a><a href="/personale"><span>◎</span><strong>Candidati salvati</strong><small>Profili interessanti per il team</small></a><a href="#"><span>▤</span><strong>Documenti</strong><small>Presto disponibile</small></a><a href="#"><span>↗</span><strong>Professionisti</strong><small>Presto disponibile</small></a></section></main>}
