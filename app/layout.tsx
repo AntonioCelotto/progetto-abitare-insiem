@@ -4,6 +4,7 @@ import './marketplace.css';
 import './home-showcase.css';
 import './project.css';
 import './auth.css';
+import './responsive.css';
 
 export const metadata: Metadata = {
   title: 'Progetto Abitare Insieme',
