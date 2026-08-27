@@ -17,14 +17,52 @@ export default function AuthPage(){
   const [error,setError]=useState('');
 
   useEffect(()=>{
-    const hash = new URLSearchParams(window.location.hash.replace(/^#/,''));
-    const access = hash.get('access_token');
-    const refresh = hash.get('refresh_token');
-    if(access){
-      saveSession({access_token:access,refresh_token:refresh});
-      window.history.replaceState({},'',window.location.pathname);
-      window.location.href='/progetto';
+    async function finishConfirmation(){
+      const hash = new URLSearchParams(window.location.hash.replace(/^#/,''));
+      const query = new URLSearchParams(window.location.search);
+      const access = hash.get('access_token');
+      const refresh = hash.get('refresh_token');
+      const tokenHash = query.get('token_hash');
+      const type = query.get('type') || 'email';
+      const authError = hash.get('error_description') || query.get('error_description') || query.get('error');
+
+      if(access){
+        saveSession({access_token:access,refresh_token:refresh});
+        window.history.replaceState({},'',window.location.pathname+'?confirmed=1');
+        window.location.href='/progetto';
+        return;
+      }
+
+      if(tokenHash){
+        setLoading(true);
+        try{
+          const r=await fetch(`${API}/auth/v1/verify`,{
+            method:'POST',
+            headers:{'Content-Type':'application/json',apikey:KEY},
+            body:JSON.stringify({token_hash:tokenHash,type})
+          });
+          const data=await r.json();
+          if(!r.ok) throw new Error(data?.msg||data?.message||'Link di conferma non valido o scaduto.');
+          saveSession(data);
+          window.history.replaceState({},'',window.location.pathname+'?confirmed=1');
+          window.location.href='/progetto';
+          return;
+        }catch(err:any){
+          setMode('login');
+          setError(err?.message||'Non è stato possibile confermare l’account. Prova ad accedere con email e password.');
+        }finally{setLoading(false)}
+        return;
+      }
+
+      if(query.get('confirmed')==='1'){
+        setMode('login');
+        setMessage('Email confermata correttamente. Il tuo account è attivo: puoi accedere alla tua area personale.');
+      }else if(authError){
+        setMode('login');
+        setError(decodeURIComponent(authError));
+      }
     }
+    finishConfirmation();
   },[]);
 
   async function submit(e:FormEvent<HTMLFormElement>){
@@ -43,7 +81,7 @@ export default function AuthPage(){
         const data=await r.json();
         if(!r.ok) throw new Error(data?.msg||data?.message||'Registrazione non riuscita');
         if(data?.access_token){saveSession(data);window.location.href='/progetto';return}
-        setMessage('Registrazione completata. Controlla la tua email e conferma l’account, poi potrai accedere alla tua area progetto.');
+        setMessage('Registrazione completata. Ti abbiamo inviato una email: clicca sul link di conferma per attivare il tuo account.');
       }else{
         const r=await fetch(`${API}/auth/v1/token?grant_type=password`,{
           method:'POST',headers:{'Content-Type':'application/json',apikey:KEY},
