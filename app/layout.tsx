@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import ProfileAccess from './components/ProfileAccess';
 import './globals.css';
 import './marketplace.css';
 import './home-showcase.css';
@@ -18,6 +19,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="it">
       <body>
         {children}
+        <ProfileAccess />
         <footer className="site-footer">
           <div className="site-footer-main">
             <div className="site-footer-brand">
