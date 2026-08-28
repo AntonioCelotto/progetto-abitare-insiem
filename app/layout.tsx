@@ -6,6 +6,7 @@ import './pricing-home.css';
 import './project.css';
 import './auth.css';
 import './responsive.css';
+import './profile.css';
 
 export const metadata: Metadata = {
   title: 'Progetto Abitare Insieme',
