@@ -5,53 +5,10 @@ const plans = [
   { name: "Portale PRO", price: "39 € / mese", annual: "oppure 390 € / anno", text: "Per chi vuole gestire il proprio progetto in autonomia con tutti gli strumenti digitali.", features: ["Il mio progetto e percorso guidato", "La mia scrivania documentale", "Preferiti immobili e personale", "Simulatore economico", "Checklist e stato delle fasi", "Archivio richieste"], featured: false, actions: [["Attiva mensile", "pro_monthly"], ["Attiva annuale", "pro_yearly"]] },
   { name: "Portale Assistito", price: "99 € / mese", annual: "supporto continuativo", text: "La piattaforma completa con un livello di assistenza dedicato durante il percorso.", features: ["Tutto il piano PRO", "Supporto operativo da remoto", "Revisione periodica del progetto", "Orientamento sui prossimi passi", "Priorita nelle richieste"], featured: true, actions: [["Scegli Assistito", "assisted_monthly"]] },
 ] as const;
-
 const services = [
-  { name: "Sessione strategica", price: "250 €", text: "60 minuti di analisi del progetto. Se prosegui con una consulenza completa, l'importo viene scalato.", code: "strategy" },
-  { name: "Consulenza LIGHT", price: "2.900 €", text: "Percorso da remoto con videocall operative, impostazione del progetto e accompagnamento sui passaggi principali.", code: "light" },
-  { name: "Consulenza FULL", price: "4.500 €", text: "Affiancamento operativo con fino a 3 sopralluoghi e 12 mesi di Portale PRO inclusi.", code: "full" },
-  { name: "Abitare Insieme 360", price: "da 7.900 €", text: "Percorso completo: progetto, immobile, verifiche, piano economico, personale, fornitori e accompagnamento verso l'apertura.", code: "360" },
+  { name: "Sessione strategica", price: "250 €", text: "60 minuti di analisi del progetto. Se prosegui con una consulenza completa, l'importo viene scalato.", code: "strategy", action:"Richiedi un incontro" },
+  { name: "Consulenza LIGHT", price: "2.900 €", text: "Percorso da remoto con videocall operative, impostazione del progetto e accompagnamento sui passaggi principali.", code: "light", action:"Parliamo del tuo progetto" },
+  { name: "Consulenza FULL", price: "4.500 €", text: "Affiancamento operativo con fino a 3 sopralluoghi e 12 mesi di Portale PRO inclusi.", code: "full", action:"Parliamo del tuo progetto" },
+  { name: "Abitare Insieme 360", price: "da 7.900 €", text: "Percorso completo: progetto, immobile, verifiche, piano economico, personale, fornitori e accompagnamento verso l'apertura.", code: "360", action:"Richiedi una proposta" },
 ] as const;
-
-export default function AbbonamentiPage() {
-  return (
-    <main className="subscriptions-page">
-      <section className="subscriptions-hero">
-        <div className="subscriptions-wrap">
-          <Link className="subscriptions-back" href="/">← Torna alla home</Link>
-          <p className="eyebrow">PIANI E SERVIZI</p>
-          <h1>Il supporto giusto,<br /><em>nel momento giusto.</em></h1>
-          <p className="lead">Puoi usare Abitare Insieme come la tua scrivania digitale oppure farti accompagnare da un professionista fino all&apos;apertura della struttura.</p>
-        </div>
-      </section>
-
-      <section className="subscriptions-wrap section-space">
-        <div className="section-heading"><p className="eyebrow">ABBONAMENTI DIGITALI</p><h2>La tua scrivania sempre con te.</h2></div>
-        <div className="plans-grid">
-          {plans.map((p) => (
-            <article key={p.name} className={`plan-card ${p.featured ? "featured" : ""}`}>
-              {p.featured && <span className="plan-badge">PIÙ COMPLETO</span>}
-              <h3>{p.name}</h3><div className="plan-price">{p.price}</div><div className="plan-annual">{p.annual}</div><p>{p.text}</p>
-              <ul>{p.features.map((f) => <li key={f}>✓ {f}</li>)}</ul>
-              <div style={{ display: "grid", gap: 10 }}>{p.actions.map(([label, code]) => <Link className="primary-btn" key={code} href={`/contratto?product=${code}`}>{label}</Link>)}</div>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="services-band">
-        <div className="subscriptions-wrap section-space">
-          <div className="section-heading"><p className="eyebrow">CONSULENZA E AFFIANCAMENTO</p><h2>Se vuoi, non sei solo.</h2><p>Dalla prima valutazione all&apos;apertura: scegli quanto vuoi essere accompagnato.</p></div>
-          <div className="services-grid">
-            {services.map((s) => <article className="service-card" key={s.name}><h3>{s.name}</h3><strong>{s.price}</strong><p>{s.text}</p><Link href={`/contratto?product=${s.code}`}>{s.code === "360" ? "Richiedi una proposta" : "Attiva il servizio"} →</Link></article>)}
-          </div>
-        </div>
-      </section>
-
-      <section id="contratto" className="subscriptions-wrap contract-section">
-        <div className="contract-copy"><p className="eyebrow">CONTRATTO DIGITALE</p><h2>Tutto chiaro prima di iniziare.</h2><p>Prima dell&apos;attivazione visualizzi condizioni, durata, prezzo e servizi compresi. Il contratto viene accettato digitalmente e resta disponibile nella tua area personale.</p><div className="contract-steps"><span><b>01</b> Scegli il servizio</span><span><b>02</b> Leggi e accetta il contratto</span><span><b>03</b> Completa il pagamento</span><span><b>04</b> Trovi tutto nel tuo profilo</span></div></div>
-        <div className="contract-box"><p className="eyebrow">AREA PERSONALE</p><h3>Abbonamenti e contratti sempre disponibili</h3><p>Dopo l&apos;attivazione trovi piano, stato, rinnovi e contratti direttamente nel tuo profilo.</p><Link className="primary-btn" href="/progetto/abbonamento">Il mio abbonamento</Link><small>I prezzi indicati sono da intendersi + IVA ove applicabile. Professionisti esterni, pratiche, lavori, trasferte straordinarie e costi di terzi sono esclusi salvo diversa indicazione contrattuale.</small></div>
-      </section>
-    </main>
-  );
-}
+export default function AbbonamentiPage(){return <main className="subscriptions-page"><section className="subscriptions-hero"><div className="subscriptions-wrap"><Link className="subscriptions-back" href="/">← Torna alla home</Link><p className="eyebrow">PIANI E SERVIZI</p><h1>Il supporto giusto,<br/><em>nel momento giusto.</em></h1><p className="lead">Puoi usare Abitare Insieme come la tua scrivania digitale oppure farti accompagnare da un professionista fino all&apos;apertura della struttura.</p></div></section><section className="subscriptions-wrap section-space"><div className="section-heading"><p className="eyebrow">ABBONAMENTI DIGITALI</p><h2>La tua scrivania sempre con te.</h2></div><div className="plans-grid">{plans.map(p=><article key={p.name} className={`plan-card ${p.featured?'featured':''}`}>{p.featured&&<span className="plan-badge">PIÙ COMPLETO</span>}<h3>{p.name}</h3><div className="plan-price">{p.price}</div><div className="plan-annual">{p.annual}</div><p>{p.text}</p><ul>{p.features.map(f=><li key={f}>✓ {f}</li>)}</ul><div style={{display:'grid',gap:10}}>{p.actions.map(([label,code])=><Link className="primary-btn" key={code} href={`/contratto?product=${code}`}>{label}</Link>)}</div></article>)}</div></section><section className="services-band"><div className="subscriptions-wrap section-space"><div className="section-heading"><p className="eyebrow">CONSULENZA E AFFIANCAMENTO</p><h2>Se vuoi, non sei solo.</h2><p>I servizi professionali iniziano con un primo confronto, online o in presenza. Dopo l&apos;analisi del progetto predisponiamo il contratto dedicato e il pagamento avviene tramite bonifico bancario secondo le condizioni concordate.</p></div><div className="services-grid">{services.map(s=><article className="service-card" key={s.name}><h3>{s.name}</h3><strong>{s.price}</strong><p>{s.text}</p><span className="service-method">Primo incontro · Contratto dedicato · Bonifico bancario</span><Link href={`/servizi/richiesta?service=${s.code}`}>{s.action} →</Link></article>)}</div></div></section><section id="contratto" className="subscriptions-wrap contract-section"><div className="contract-copy"><p className="eyebrow">CONTRATTO DIGITALE</p><h2>Tutto chiaro prima di iniziare.</h2><p>Gli abbonamenti digitali vengono attivati online tramite Stripe. Per consulenze e affiancamento, invece, il contratto viene predisposto dopo il primo incontro e il pagamento avviene tramite bonifico bancario.</p><div className="contract-steps"><span><b>01</b> Scegli il servizio</span><span><b>02</b> Primo confronto</span><span><b>03</b> Contratto dedicato</span><span><b>04</b> Attivazione del percorso</span></div></div><div className="contract-box"><p className="eyebrow">AREA PERSONALE</p><h3>Abbonamenti e contratti sempre disponibili</h3><p>Dopo l&apos;attivazione trovi piano, stato, rinnovi e contratti direttamente nel tuo profilo.</p><Link className="primary-btn" href="/progetto/abbonamento">Il mio abbonamento</Link><small>I prezzi indicati sono da intendersi + IVA ove applicabile. Professionisti esterni, pratiche, lavori, trasferte straordinarie e costi di terzi sono esclusi salvo diversa indicazione contrattuale.</small></div></section></main>}
