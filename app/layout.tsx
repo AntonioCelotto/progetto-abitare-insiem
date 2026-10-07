@@ -10,8 +10,12 @@ import './responsive.css';
 import './profile.css';
 
 export const metadata: Metadata = {
-  title: 'Progetto Abitare Insieme',
-  description: "Dall'idea all'apertura della tua struttura per anziani.",
+  metadataBase: new URL('https://www.portaleabitareinsieme.it'),
+  title: 'Abitare Insieme | Aprire e gestire strutture per anziani',
+  description: "Il portale per aprire e gestire case famiglia, comunita alloggio, residenze protette, RSA e senior living. Dall'idea all'apertura con servizi, personale, immobili e simulatore economico.",
+  keywords: ['aprire casa famiglia anziani','strutture per anziani','comunita alloggio anziani','residenza protetta','RSA','senior living','gestione casa famiglia'],
+  alternates: { canonical: '/' },
+  openGraph: { title: 'Abitare Insieme | Dall idea all apertura', description: 'Apri e gestisci la tua struttura per anziani con un percorso guidato.', url: '/', siteName: 'Progetto Abitare Insieme', locale: 'it_IT', type: 'website' },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
