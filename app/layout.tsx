@@ -10,6 +10,7 @@ import './responsive.css';
 import './profile.css';
 
 export const metadata: Metadata = {
+  verification: { google: 'IbDiBrlOscsf0MNV2F1n_xOiY__ATTiZvKWH_rUeh4k' },
   metadataBase: new URL('https://www.portaleabitareinsieme.it'),
   title: 'Abitare Insieme | Aprire e gestire strutture per anziani',
   description: "Il portale per aprire e gestire case famiglia, comunita alloggio, residenze protette, RSA e senior living. Dall'idea all'apertura con servizi, personale, immobili e simulatore economico.",
