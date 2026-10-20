@@ -1,6 +1,7 @@
 "use client";
 import {useState} from "react";
 import "./landing.css";
+import "./portraits.css";
 export default function PrimaConsulenza(){
  const [nome,setNome]=useState("");const [telefono,setTelefono]=useState("");const [email,setEmail]=useState("");const [messaggio,setMessaggio]=useState("");
  const wa="https://wa.me/393457980259?text="+encodeURIComponent("Richiesta prima consulenza Abitare Insieme (€250)\nNome: "+nome+"\nTelefono: "+telefono+"\nEmail: "+email+"\nProgetto: "+messaggio);
